@@ -1,22 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f0e8;
+  --foreground: #2d3436;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
 }
 
 body {
@@ -24,3 +17,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Postcard diagonal stripe border — red & blue airmail style */
+.postcard-border {
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      #d63031 0px,
+      #d63031 8px,
+      transparent 8px,
+      transparent 16px,
+      #2563eb 16px,
+      #2563eb 24px,
+      transparent 24px,
+      transparent 32px
+    );
+}
+
+@keyframes blob {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(30px, -50px) scale(1.1); }
+  66%  { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob { animation: blob 7s infinite; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }

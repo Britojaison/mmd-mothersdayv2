@@ -301,7 +301,7 @@
 
 .noteArea {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
   flex: 1 1 auto;
   padding-top: 7%;
@@ -311,6 +311,7 @@
 
 .letterContent {
   margin: 18px;
+  width: calc(100% - 36px);
   max-width: calc(100% - 36px);
 }
 
@@ -369,15 +370,20 @@
 
 @media (max-width: 900px) {
   .pageShell {
-    padding: 8px;
+    position: relative;
+    inset: auto;
+    min-height: 100dvh;
+    padding: 12px;
+    overflow-y: auto;
   }
 
   .cardPerspective {
-    width: min(92vw, 92vh * 0.78);
-    height: min(92vh, 92vw / 0.78);
+    width: min(100%, 560px);
+    height: auto;
   }
 
   .postcardFrame {
+    height: auto;
     aspect-ratio: auto;
   }
 
@@ -405,7 +411,7 @@
   }
 
   .rightPanel {
-    padding: 28px 24px 34px;
+    padding: 24px 20px 28px;
   }
 
   .signatureArea {
@@ -413,24 +419,28 @@
   }
 
   .topDecorArea {
-    min-height: 145px;
+    min-height: 130px;
   }
 
   .stampCluster {
-    width: 38%;
+    width: 34%;
     right: 0;
   }
 
   .letterBadge {
-    bottom: 7%;
-    left: 34%;
-    width: 18%;
+    bottom: 2%;
+    left: 42%;
+    width: 16%;
+  }
+
+  .noteArea {
+    padding-top: 12px;
   }
 }
 
 @media (max-width: 640px) {
   .pageShell {
-    padding: 6px;
+    padding: 8px;
   }
 
   .closedLabel {
@@ -438,53 +448,67 @@
   }
 
   .headlineRow {
-    gap: 14px;
+    gap: 10px;
   }
 
   .bouquetWrap {
-    width: 34px;
+    width: 30px;
+  }
+
+  .headline {
+    font-size: clamp(1.1rem, 6vw, 1.5rem);
+    line-height: 1.08;
   }
 
   .bowlArtwork {
-    min-height: 220px;
-    border-radius: 14px;
+    min-height: 200px;
+    border-radius: 12px;
   }
 
   .topDecorArea {
-    min-height: 96px;
+    min-height: 102px;
   }
 
   .stampCluster {
-    width: 34%;
+    width: 40%;
   }
 
   .letterBadge {
-    bottom: 6%;
-    left: 30%;
-    width: 17%;
+    bottom: 0;
+    left: 38%;
+    width: 19%;
   }
 
   .noteArea {
-    padding-top: 4px;
+    padding-top: 10px;
   }
 
   .letterContent {
-    margin: 18px;
-    max-width: calc(100% - 36px);
+    margin: 12px;
+    width: calc(100% - 24px);
+    max-width: calc(100% - 24px);
   }
 
   .letterGreeting {
-    margin-bottom: 10px;
-    font-size: 1rem;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
   }
 
   .letterBody {
-    font-size: 0.98rem;
-    line-height: 1.75;
+    font-size: 0.9rem;
+    line-height: 1.65;
   }
 
   .signatureArea {
-    padding: 12px 6px 0;
+    padding: 10px 4px 0;
+  }
+
+  .signatureLabel {
+    font-size: 0.95rem;
+  }
+
+  .signatureName {
+    font-size: 1.15rem;
   }
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Gift, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
@@ -23,6 +23,7 @@ const SAUCES = [
 ];
 
 const MAX_MESSAGE_LENGTH = 140;
+const SUGGESTED_MESSAGE = "Happy Mother's Day! I made this just for you with all my love 💕";
 
 function getStrawberryRecipeImage(yogurt: string, toppings: string[], sauce: string): string | null {
   if (yogurt !== "strawberry") return null;
@@ -40,11 +41,27 @@ export default function YogurtMaker() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [motherName, setMotherName] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(
+    SUGGESTED_MESSAGE.slice(0, MAX_MESSAGE_LENGTH)
+  );
   const [selectedYogurt, setSelectedYogurt] = useState("");
   const [selectedToppings, setSelectedToppings] = useState<string[]>([]);
   const [selectedSauce, setSelectedSauce] = useState("");
   const [copied, setCopied] = useState(false);
+  const messageRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const fillSuggestedMessage = () => {
+    if (message.trim()) return;
+
+    const nextMessage = SUGGESTED_MESSAGE.slice(0, MAX_MESSAGE_LENGTH);
+    setMessage(nextMessage);
+
+    requestAnimationFrame(() => {
+      messageRef.current?.focus();
+      const length = nextMessage.length;
+      messageRef.current?.setSelectionRange(length, length);
+    });
+  };
 
   const toggleTopping = (id: string) =>
     setSelectedToppings((prev) =>
@@ -117,36 +134,36 @@ export default function YogurtMaker() {
   };
 
   return (
-    <div className="h-screen overflow-hidden font-sans relative" style={{ backgroundColor: "#f5f0e8" }}>
+    <div className="min-h-dvh md:h-screen overflow-y-auto md:overflow-hidden font-sans relative" style={{ backgroundColor: "#f5f0e8" }}>
       {/* Subtle warm blobs */}
       <div className="absolute top-10 left-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style={{ backgroundColor: "#d63031" }} />
       <div className="absolute top-10 right-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" style={{ backgroundColor: "#2563eb" }} />
       <div className="absolute -bottom-8 left-20 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob animation-delay-4000" style={{ backgroundColor: "#c9a96e" }} />
 
-      <div className="max-w-4xl mx-auto h-full px-4 py-4 md:py-5 relative z-10 flex flex-col justify-center">
+      <div className="max-w-5xl mx-auto min-h-dvh md:h-full px-3 sm:px-4 py-4 md:py-5 relative z-10 flex flex-col justify-start md:justify-center">
         {/* Header */}
-        <header className="text-center mb-5 md:mb-6">
+        <header className="text-center mb-4 md:mb-6 pt-2 md:pt-0">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", bounce: 0.5 }}
-            className="inline-flex items-center gap-3 mb-2"
+            className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-2"
           >
-            <img src="/images/logo.png" alt="Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain" />
-            <h1 className="text-3xl md:text-5xl font-extrabold" style={{ color: "#2d3436" }}>
+            <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
+            <h1 className="text-2xl sm:text-3xl md:text-5xl leading-none font-extrabold" style={{ color: "#2d3436" }}>
               Yogurt Bowl Magic
             </h1>
-            <img src="/images/logo.png" alt="Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain" />
+            <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
           </motion.div>
-          <p className="text-sm md:text-base font-medium" style={{ color: "#636e72" }}>
+          <p className="text-sm sm:text-base font-medium px-2" style={{ color: "#636e72" }}>
             Create the perfect Mother&apos;s Day treat!
           </p>
         </header>
 
-        <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-center">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start md:items-center">
           {/* Bowl Preview */}
           <motion.div
-            className="relative aspect-square max-w-[280px] md:max-w-sm mx-auto w-full rounded-full p-5 md:p-6 flex items-center justify-center shadow-xl border-4"
+            className="relative aspect-square max-w-[220px] sm:max-w-[260px] md:max-w-sm mx-auto w-full rounded-full p-4 sm:p-5 md:p-6 flex items-center justify-center shadow-xl border-4"
             style={{ backgroundColor: "#ede8dc", borderColor: "#c9a96e" }}
             layoutId="bowl-container"
           >
@@ -157,7 +174,7 @@ export default function YogurtMaker() {
 
           {/* Step Cards */}
           <div
-            className="rounded-3xl p-5 md:p-6 shadow-xl border min-h-[360px] md:min-h-[390px] flex flex-col"
+            className="rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl border min-h-0 md:min-h-[390px] flex flex-col"
             style={{ backgroundColor: "#faf7f2", borderColor: "#e0d5c5" }}
           >
             <AnimatePresence mode="wait">
@@ -174,7 +191,7 @@ export default function YogurtMaker() {
                       <button
                         key={yogurt.id}
                         onClick={() => setSelectedYogurt(yogurt.id)}
-                        className={`relative p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-3 overflow-hidden ${
+                        className={`relative p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 sm:gap-3 overflow-hidden ${
                           selectedYogurt === yogurt.id ? "scale-105 shadow-lg" : "hover:scale-102"
                         }`}
                         style={{
@@ -183,7 +200,7 @@ export default function YogurtMaker() {
                         }}
                       >
                         <img src={yogurt.image} alt={yogurt.name} className="w-16 h-16 md:w-20 md:h-20 object-contain relative z-10" />
-                        <span className="font-bold text-sm" style={{ color: "#2d3436" }}>{yogurt.name}</span>
+                        <span className="font-bold text-xs sm:text-sm text-center" style={{ color: "#2d3436" }}>{yogurt.name}</span>
                       </button>
                     ))}
                   </div>
@@ -203,7 +220,7 @@ export default function YogurtMaker() {
                       <button
                         key={topping.id}
                         onClick={() => toggleTopping(topping.id)}
-                        className={`p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-3 ${
+                        className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 sm:gap-3 ${
                           selectedToppings.includes(topping.id) ? "scale-105 shadow-lg" : ""
                         }`}
                         style={{
@@ -212,7 +229,7 @@ export default function YogurtMaker() {
                         }}
                       >
                         <img src={topping.image} alt={topping.name} className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md" />
-                        <span className="font-semibold text-sm text-center leading-tight" style={{ color: "#2d3436" }}>{topping.name}</span>
+                        <span className="font-semibold text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436" }}>{topping.name}</span>
                       </button>
                     ))}
                   </div>
@@ -232,7 +249,7 @@ export default function YogurtMaker() {
                       <button
                         key={sauce.id}
                         onClick={() => setSelectedSauce(sauce.id === selectedSauce ? "" : sauce.id)}
-                        className={`p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-3 ${
+                        className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 sm:gap-3 ${
                           selectedSauce === sauce.id ? "scale-105 shadow-lg" : ""
                         }`}
                         style={{
@@ -241,7 +258,7 @@ export default function YogurtMaker() {
                         }}
                       >
                         <img src={sauce.image} alt={sauce.name} className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg" />
-                        <span className="font-semibold text-sm text-center leading-tight" style={{ color: "#2d3436" }}>{sauce.name}</span>
+                        <span className="font-semibold text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436" }}>{sauce.name}</span>
                       </button>
                     ))}
                   </div>
@@ -293,8 +310,16 @@ export default function YogurtMaker() {
                   <div>
                     <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Message for Mom</label>
                     <textarea
+                      ref={messageRef}
                       value={message}
                       onChange={(e) => setMessage(e.target.value.slice(0, MAX_MESSAGE_LENGTH))}
+                      onClick={fillSuggestedMessage}
+                      onKeyDown={(e) => {
+                        if (e.key === "Shift" && !message.trim()) {
+                          e.preventDefault();
+                          fillSuggestedMessage();
+                        }
+                      }}
                       placeholder="e.g. Happy Mother's Day! I made this just for you with all my love 💕"
                       rows={3}
                       maxLength={MAX_MESSAGE_LENGTH}
@@ -335,8 +360,8 @@ export default function YogurtMaker() {
 
             {/* Navigation */}
             {step < 3 && (
-              <div className="mt-5 flex justify-between items-center pt-4" style={{ borderTop: "1px solid #e0d5c5" }}>
-                <div className="flex items-center gap-3">
+              <div className="mt-5 flex justify-between items-center gap-3 pt-4" style={{ borderTop: "1px solid #e0d5c5" }}>
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   {step > 0 && (
                     <button
                       onClick={() => setStep((s) => s - 1)}
@@ -362,7 +387,7 @@ export default function YogurtMaker() {
                 <button
                   onClick={() => setStep((s) => s + 1)}
                   disabled={!canGoNext}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white"
+                  className="flex shrink-0 items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white"
                   style={{ backgroundColor: "#2d3436" }}
                 >
                   {step === 2 ? "Finish" : "Next"}

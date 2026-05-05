@@ -77,6 +77,12 @@ const SAUCES = [
 ];
 
 const MAX_MESSAGE_LENGTH = 140;
+const bowlTransition = {
+  duration: 0.5,
+  ease: [0.22, 1, 0.36, 1] as const,
+};
+const headingFont = "var(--font-roca), Arial, Helvetica, sans-serif";
+const bodyFont = "var(--font-zeitung), Arial, Helvetica, sans-serif";
 const SUGGESTED_MESSAGE = "Happy Mother's Day! I made this just for you with all my love 💕";
 
 function getBowlRecipeImage(yogurt: string, toppings: string[], sauce: string): string | null {
@@ -160,15 +166,16 @@ export default function YogurtMaker() {
     );
     if (composedImage) {
       return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false}>
           <motion.img
             key={composedImage}
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
+            initial={{ opacity: 0, scale: 0.97, filter: "blur(10px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 1.03, filter: "blur(10px)" }}
+            transition={bowlTransition}
             src={composedImage}
             alt="Yogurt Bowl"
-            className="absolute w-[90%] h-auto z-10 drop-shadow-xl"
+            className="absolute inset-0 m-auto w-[90%] h-auto z-10 drop-shadow-xl will-change-transform"
           />
         </AnimatePresence>
       );
@@ -221,12 +228,11 @@ export default function YogurtMaker() {
             className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-2"
           >
             <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
-            <h1 className="text-2xl sm:text-3xl md:text-5xl leading-none font-extrabold" style={{ color: "#2d3436" }}>
+            <h1 className="text-2xl sm:text-3xl md:text-5xl leading-none font-extrabold" style={{ color: "#2d3436", fontFamily: headingFont }}>
               Yogurt Bowl Magic
             </h1>
-            <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
           </motion.div>
-          <p className="text-sm sm:text-base font-medium px-2" style={{ color: "#636e72" }}>
+          <p className="text-sm sm:text-base px-2" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>
             Create the perfect Mother&apos;s Day treat!
           </p>
         </header>
@@ -234,11 +240,11 @@ export default function YogurtMaker() {
         <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start md:items-center">
           {/* Bowl Preview */}
           <motion.div
-            className="relative aspect-square max-w-[220px] sm:max-w-[260px] md:max-w-sm mx-auto w-full rounded-full p-4 sm:p-5 md:p-6 flex items-center justify-center shadow-xl border-4"
+            className="relative aspect-square max-w-[250px] sm:max-w-[290px] md:max-w-md mx-auto w-full rounded-full p-4 sm:p-5 md:p-6 flex items-center justify-center shadow-xl border-4"
             style={{ backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }}
             layoutId="bowl-container"
           >
-            <div className="relative w-full h-full flex items-center justify-center">
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
               {renderBowlPreview()}
             </div>
           </motion.div>
@@ -254,8 +260,8 @@ export default function YogurtMaker() {
                 <motion.div key="step0" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>1. Choose a Base</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72" }}>Pick a yogurt flavor to start your bowl.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>1. Choose a Base</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Pick a yogurt flavor to start your bowl.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {YOGURTS.map((yogurt) => (
@@ -271,7 +277,7 @@ export default function YogurtMaker() {
                         }}
                       >
                         <img src={yogurt.image} alt={yogurt.name} className="w-16 h-16 md:w-20 md:h-20 object-contain relative z-10" />
-                        <span className="font-bold text-xs sm:text-sm text-center" style={{ color: "#2d3436" }}>{yogurt.name}</span>
+                        <span className="text-xs sm:text-sm text-center" style={{ color: "#2d3436", fontFamily: bodyFont, fontWeight: 400 }}>{yogurt.name}</span>
                       </button>
                     ))}
                   </div>
@@ -283,8 +289,8 @@ export default function YogurtMaker() {
                 <motion.div key="step1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>2. Pick a Fruit Topping</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72" }}>Choose one topping, or skip this step.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Pick a Fruit Topping</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose one topping, or skip this step.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {TOPPINGS.map((topping) => (
@@ -300,7 +306,7 @@ export default function YogurtMaker() {
                         }}
                       >
                         <img src={topping.image} alt={topping.name} className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md" />
-                        <span className="font-semibold text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436" }}>{topping.name}</span>
+                        <span className="text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436", fontFamily: bodyFont, fontWeight: 400 }}>{topping.name}</span>
                       </button>
                     ))}
                   </div>
@@ -312,8 +318,8 @@ export default function YogurtMaker() {
                 <motion.div key="step2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>3. Add a Syrup</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72" }}>Add a finishing drizzle, or skip.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Add a Syrup</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Add a finishing drizzle, or skip.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {SAUCES.map((sauce) => (
@@ -329,7 +335,7 @@ export default function YogurtMaker() {
                         }}
                       >
                         <img src={sauce.image} alt={sauce.name} className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg" />
-                        <span className="font-semibold text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436" }}>{sauce.name}</span>
+                        <span className="text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436", fontFamily: bodyFont, fontWeight: 400 }}>{sauce.name}</span>
                       </button>
                     ))}
                   </div>
@@ -345,8 +351,8 @@ export default function YogurtMaker() {
                       <Check className="w-5 h-5" style={{ color: "#2d6a4f" }} />
                     </div>
                     <div>
-                      <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>Almost done!</h2>
-                      <p className="text-sm" style={{ color: "#636e72" }}>Write a message for your Mom.</p>
+                      <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>Almost done!</h2>
+                      <p className="text-sm" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Write a message for your Mom.</p>
                     </div>
                   </div>
 
@@ -399,7 +405,7 @@ export default function YogurtMaker() {
                       onFocus={(e) => (e.target.style.borderColor = "#d63031")}
                       onBlur={(e) => (e.target.style.borderColor = "#e0d5c5")}
                     />
-                    <p className="mt-2 text-xs" style={{ color: "#636e72" }}>
+                    <p className="mt-2 text-xs" style={{ color: "#636e72", fontFamily: bodyFont }}>
                       {message.length}/{MAX_MESSAGE_LENGTH} characters
                     </p>
                   </div>

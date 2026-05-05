@@ -127,7 +127,7 @@
   max-width: 100%;
   margin: 0;
   color: #171615;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-roca), Georgia, "Times New Roman", serif;
   font-size: clamp(0.92rem, 1.58vw, 2.15rem);
   line-height: 1.02;
   font-weight: 700;

@@ -6,35 +6,104 @@ import { Copy, Gift, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
 
 const YOGURTS = [
-  { id: "mango", name: "Mango Delight", image: "/images/yogurts/mango yogurt(cartoon).png", color: "bg-orange-100" },
-  { id: "strawberry", name: "Berry Sweet", image: "/images/yogurts/strawberry yogurt(cartoon).png", color: "bg-rose-100" },
+  {
+    id: "blueberry",
+    name: "Blueberry Bliss",
+    image: "/images/Yogurts/blueberry.png",
+    bowlFolder: "Blueberry Yogurt Bowl",
+    baseImage: "blueberry yogurt bowl.png",
+    filePrefix: "Blueberry yogurt bowl",
+  },
+  {
+    id: "mango",
+    name: "Mango Delight",
+    image: "/images/Yogurts/mango.png",
+    bowlFolder: "mango yogurt bowl",
+    baseImage: "mango yogurt bowl.png",
+    filePrefix: "Mango yogurt bowl",
+  },
+  {
+    id: "peach",
+    name: "Peach Glow",
+    image: "/images/Yogurts/peach.png",
+    bowlFolder: "peach yogurt bowl",
+    baseImage: "peach yogurt bowl.png",
+    filePrefix: "Peach yogurt bowl",
+  },
+  {
+    id: "strawberry",
+    name: "Berry Sweet",
+    image: "/images/Yogurts/strawberry.png",
+    bowlFolder: "strawberry yogurt bowl",
+    baseImage: "strawberry yogurt bowl.png",
+    filePrefix: "Strawberry yogurt bowl",
+  },
 ];
 
 const TOPPINGS = [
-  { id: "blueberries", name: "Blueberries", image: "/images/toppings/blueberries.png" },
-  { id: "chocolate", name: "Chocolate Chips", image: "/images/toppings/chocolate.png" },
-  { id: "mango", name: "Fresh Mango", image: "/images/toppings/mango.png" },
-  { id: "strawberry", name: "Strawberries", image: "/images/toppings/strawberry.png" },
+  {
+    id: "banana",
+    name: "Banana",
+    image: "/images/Fruits_toppings/banana topping.png",
+    fileLabel: "banana topping",
+  },
+  {
+    id: "blueberry",
+    name: "Blueberries",
+    image: "/images/Fruits_toppings/blueberry_topping.png",
+    fileLabel: "blueberry topping",
+  },
+  {
+    id: "strawberry",
+    name: "Strawberries",
+    image: "/images/Fruits_toppings/strawberry topping.png",
+    fileLabel: "strawberry topping",
+  },
 ];
 
 const SAUCES = [
-  { id: "choco syrup", name: "Chocolate Syrup", image: "/images/sauses/choco syrup.png" },
-  { id: "strawberry syrup", name: "Strawberry Syrup", image: "/images/sauses/strawberry syrup.png" },
+  {
+    id: "chocolate",
+    name: "Chocolate Syrup",
+    image: "/images/Syrups/chocolate syrup.png",
+    fileLabel: "chocolate syrup",
+  },
+  {
+    id: "honey",
+    name: "Honey Syrup",
+    image: "/images/Syrups/honey syrup.png",
+    fileLabel: "honey syrup",
+  },
 ];
 
 const MAX_MESSAGE_LENGTH = 140;
 const SUGGESTED_MESSAGE = "Happy Mother's Day! I made this just for you with all my love 💕";
 
-function getStrawberryRecipeImage(yogurt: string, toppings: string[], sauce: string): string | null {
-  if (yogurt !== "strawberry") return null;
-  const onlyStrawberry = toppings.length === 1 && toppings.includes("strawberry");
-  if (onlyStrawberry && sauce === "strawberry syrup")
-    return "/images/strawberry yogurt/strawberrybowl_withstrawberries_strawberrysyrup.png";
-  if (onlyStrawberry && !sauce)
-    return "/images/strawberry yogurt/strawberrybowl_with strawberries.png";
-  if (toppings.length === 0 && !sauce)
-    return "/images/strawberry yogurt/strawberrybowl.png";
-  return null;
+function getBowlRecipeImage(yogurt: string, toppings: string[], sauce: string): string | null {
+  const yogurtConfig = YOGURTS.find((item) => item.id === yogurt);
+  if (!yogurtConfig) return null;
+
+  const toppingId = toppings[0];
+  const toppingConfig = TOPPINGS.find((item) => item.id === toppingId);
+  const sauceConfig = SAUCES.find((item) => item.id === sauce);
+
+  if (
+    yogurt === "strawberry" &&
+    toppingId === "blueberry" &&
+    sauce === "chocolate"
+  ) {
+    return "/images/strawberry yogurt bowl/Untitled-2.png";
+  }
+
+  if (toppingConfig && sauceConfig) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel} + ${sauceConfig.fileLabel}.png`;
+  }
+
+  if (toppingConfig) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel}.png`;
+  }
+
+  return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`;
 }
 
 export default function YogurtMaker() {
@@ -45,7 +114,7 @@ export default function YogurtMaker() {
     SUGGESTED_MESSAGE.slice(0, MAX_MESSAGE_LENGTH)
   );
   const [selectedYogurt, setSelectedYogurt] = useState("");
-  const [selectedToppings, setSelectedToppings] = useState<string[]>([]);
+  const [selectedTopping, setSelectedTopping] = useState("");
   const [selectedSauce, setSelectedSauce] = useState("");
   const [copied, setCopied] = useState(false);
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
@@ -64,9 +133,7 @@ export default function YogurtMaker() {
   };
 
   const toggleTopping = (id: string) =>
-    setSelectedToppings((prev) =>
-      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
-    );
+    setSelectedTopping((prev) => (prev === id ? "" : id));
 
   const canGoNext =
     step === 0 ? selectedYogurt !== "" :
@@ -75,7 +142,7 @@ export default function YogurtMaker() {
 
   const giftLink =
     typeof window !== "undefined"
-      ? `${window.location.origin}/gift?n=${encodeURIComponent(name)}&mn=${encodeURIComponent(motherName)}&m=${encodeURIComponent(message)}&y=${selectedYogurt}&t=${selectedToppings.join(",")}&s=${selectedSauce}`
+      ? `${window.location.origin}/gift?n=${encodeURIComponent(name)}&mn=${encodeURIComponent(motherName)}&m=${encodeURIComponent(message)}&y=${selectedYogurt}&t=${selectedTopping}&s=${selectedSauce}`
       : "";
 
   const copyLink = () => {
@@ -86,7 +153,11 @@ export default function YogurtMaker() {
 
   // Bowl preview — shared between builder and finish screen
   const renderBowlPreview = () => {
-    const composedImage = getStrawberryRecipeImage(selectedYogurt, selectedToppings, selectedSauce);
+    const composedImage = getBowlRecipeImage(
+      selectedYogurt,
+      selectedTopping ? [selectedTopping] : [],
+      selectedSauce
+    );
     if (composedImage) {
       return (
         <AnimatePresence mode="wait">
@@ -113,14 +184,14 @@ export default function YogurtMaker() {
               className="absolute w-[75%] h-auto z-10"
             />
           )}
-          {selectedToppings.map((id) => (
+          {selectedTopping && (
             <motion.img
-              key={id}
+              key={selectedTopping}
               initial={{ y: -50, opacity: 0, rotate: -20 }} animate={{ y: 0, opacity: 1, rotate: 0 }} exit={{ y: -50, opacity: 0 }}
-              src={TOPPINGS.find(t => t.id === id)?.image} alt={id}
+              src={TOPPINGS.find(t => t.id === selectedTopping)?.image} alt={selectedTopping}
               className="absolute w-[65%] h-auto z-20"
             />
-          ))}
+          )}
           {selectedSauce && (
             <motion.img
               initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
@@ -164,7 +235,7 @@ export default function YogurtMaker() {
           {/* Bowl Preview */}
           <motion.div
             className="relative aspect-square max-w-[220px] sm:max-w-[260px] md:max-w-sm mx-auto w-full rounded-full p-4 sm:p-5 md:p-6 flex items-center justify-center shadow-xl border-4"
-            style={{ backgroundColor: "#ede8dc", borderColor: "#c9a96e" }}
+            style={{ backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }}
             layoutId="bowl-container"
           >
             <div className="relative w-full h-full flex items-center justify-center">
@@ -212,8 +283,8 @@ export default function YogurtMaker() {
                 <motion.div key="step1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>2. Add Toppings</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72" }}>Pick as many as you like, or skip.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>2. Pick a Fruit Topping</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72" }}>Choose one topping, or skip this step.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {TOPPINGS.map((topping) => (
@@ -221,11 +292,11 @@ export default function YogurtMaker() {
                         key={topping.id}
                         onClick={() => toggleTopping(topping.id)}
                         className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 sm:gap-3 ${
-                          selectedToppings.includes(topping.id) ? "scale-105 shadow-lg" : ""
+                          selectedTopping === topping.id ? "scale-105 shadow-lg" : ""
                         }`}
                         style={{
-                          borderColor: selectedToppings.includes(topping.id) ? "#2563eb" : "#e0d5c5",
-                          backgroundColor: selectedToppings.includes(topping.id) ? "#fff" : "#f5f0e8",
+                          borderColor: selectedTopping === topping.id ? "#2563eb" : "#e0d5c5",
+                          backgroundColor: selectedTopping === topping.id ? "#fff" : "#f5f0e8",
                         }}
                       >
                         <img src={topping.image} alt={topping.name} className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md" />
@@ -241,7 +312,7 @@ export default function YogurtMaker() {
                 <motion.div key="step2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>3. Drizzle some Sauce</h2>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436" }}>3. Add a Syrup</h2>
                     <p className="text-sm mt-1" style={{ color: "#636e72" }}>Add a finishing drizzle, or skip.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">

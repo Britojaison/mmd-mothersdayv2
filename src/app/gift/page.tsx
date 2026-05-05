@@ -9,6 +9,65 @@ import Confetti from "react-confetti";
 import styles from "./page.module.css";
 
 const MAX_MESSAGE_LENGTH = 140;
+const YOGURTS = [
+  {
+    id: "blueberry",
+    bowlFolder: "Blueberry Yogurt Bowl",
+    baseImage: "blueberry yogurt bowl.png",
+    filePrefix: "Blueberry yogurt bowl",
+  },
+  {
+    id: "mango",
+    bowlFolder: "mango yogurt bowl",
+    baseImage: "mango yogurt bowl.png",
+    filePrefix: "Mango yogurt bowl",
+  },
+  {
+    id: "peach",
+    bowlFolder: "peach yogurt bowl",
+    baseImage: "peach yogurt bowl.png",
+    filePrefix: "Peach yogurt bowl",
+  },
+  {
+    id: "strawberry",
+    bowlFolder: "strawberry yogurt bowl",
+    baseImage: "strawberry yogurt bowl.png",
+    filePrefix: "Strawberry yogurt bowl",
+  },
+];
+
+const TOPPINGS = [
+  { id: "banana", fileLabel: "banana topping" },
+  { id: "blueberry", fileLabel: "blueberry topping" },
+  { id: "strawberry", fileLabel: "strawberry topping" },
+];
+
+const SAUCES = [
+  { id: "chocolate", fileLabel: "chocolate syrup" },
+  { id: "honey", fileLabel: "honey syrup" },
+];
+
+function getBowlRecipeImage(yogurt: string | null, topping: string | null, sauce: string | null) {
+  const yogurtConfig = YOGURTS.find((item) => item.id === yogurt);
+  if (!yogurtConfig) return "/images/image.png";
+
+  if (yogurt === "strawberry" && topping === "blueberry" && sauce === "chocolate") {
+    return "/images/strawberry yogurt bowl/Untitled-2.png";
+  }
+
+  const toppingConfig = TOPPINGS.find((item) => item.id === topping);
+  const sauceConfig = SAUCES.find((item) => item.id === sauce);
+
+  if (toppingConfig && sauceConfig) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel} + ${sauceConfig.fileLabel}.png`;
+  }
+
+  if (toppingConfig) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel}.png`;
+  }
+
+  return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`;
+}
 
 function createLetterText(message: string, motherName: string) {
   const source = message.slice(0, MAX_MESSAGE_LENGTH).trim();
@@ -43,6 +102,9 @@ function GiftContent() {
   const name = searchParams.get("n") || "Someone special";
   const motherName = searchParams.get("mn") || "Mom";
   const message = searchParams.get("m") || "";
+  const yogurt = searchParams.get("y");
+  const topping = searchParams.get("t");
+  const sauce = searchParams.get("s");
 
   useEffect(() => {
     const updateSize = () =>
@@ -54,6 +116,7 @@ function GiftContent() {
   }, []);
 
   const letterContent = createLetterText(message, motherName);
+  const bowlImage = getBowlRecipeImage(yogurt, topping, sauce);
 
   return (
     <div className={styles.pageShell}>
@@ -142,7 +205,7 @@ function GiftContent() {
                     className={styles.bowlArtwork}
                   >
                     <Image
-                      src="/images/image.png"
+                      src={bowlImage}
                       alt="Yogurt bowl artwork"
                       fill
                       sizes="(max-width: 900px) 70vw, 34vw"
@@ -155,34 +218,28 @@ function GiftContent() {
                 <section className={styles.rightPanel}>
                   <div className={styles.topDecorArea}>
                     <motion.div
-                      initial={{ rotate: -9, x: -6, opacity: 0 }}
-                      animate={{ rotate: -10, x: 0, opacity: 1 }}
-                      transition={{ delay: 0.7, type: "spring", stiffness: 120 }}
-                      className={styles.letterBadge}
-                    >
-                      <Image
-                        src="/images/letter_img.png"
-                        alt=""
-                        fill
-                        sizes="150px"
-                        className={styles.letterBadgeImage}
-                        priority
-                      />
-                    </motion.div>
-
-                    <motion.div
                       initial={{ scale: 0.84, rotate: -4, opacity: 0 }}
                       animate={{ scale: 1, rotate: 0, opacity: 1 }}
                       transition={{ delay: 0.55, type: "spring", damping: 14 }}
-                      className={styles.stampCluster}
+                      className={styles.decorCluster}
                     >
-                      <div className={styles.stampWrap}>
+                      <div className={styles.stampCluster}>
                         <Image
                           src="/images/logo.png"
                           alt="For a Love Like Hers"
                           fill
                           sizes="240px"
                           className={styles.logoImage}
+                          priority
+                        />
+                      </div>
+                      <div className={styles.letterBadge}>
+                        <Image
+                          src="/images/letter_img.png"
+                          alt=""
+                          fill
+                          sizes="150px"
+                          className={styles.letterBadgeImage}
                           priority
                         />
                       </div>

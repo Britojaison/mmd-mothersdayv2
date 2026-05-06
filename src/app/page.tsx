@@ -61,6 +61,8 @@ const TOPPINGS = [
   },
 ];
 
+const TOPPING_ORDER = ["strawberry", "blueberry", "banana"] as const;
+
 const SAUCES = [
   {
     id: "chocolate",
@@ -76,6 +78,8 @@ const SAUCES = [
   },
 ];
 
+const SAUCE_ORDER = ["chocolate", "honey"] as const;
+
 const MAX_MESSAGE_LENGTH = 140;
 const bowlTransition = {
   duration: 0.5,
@@ -85,28 +89,74 @@ const headingFont = "var(--font-roca), Arial, Helvetica, sans-serif";
 const bodyFont = "var(--font-zeitung), Arial, Helvetica, sans-serif";
 const SUGGESTED_MESSAGE = "Happy Mother's Day! I made this just for you with all my love 💕";
 
-function getBowlRecipeImage(yogurt: string, toppings: string[], sauce: string): string | null {
+function getOrderedToppings(toppings: string[]) {
+  return [...new Set(toppings)]
+    .filter((topping) => TOPPINGS.some((item) => item.id === topping))
+    .sort(
+      (left, right) =>
+        TOPPING_ORDER.indexOf(left as (typeof TOPPING_ORDER)[number]) -
+        TOPPING_ORDER.indexOf(right as (typeof TOPPING_ORDER)[number])
+    );
+}
+
+function getOrderedSauces(sauces: string[]) {
+  return [...new Set(sauces)]
+    .filter((sauce) => SAUCES.some((item) => item.id === sauce))
+    .sort(
+      (left, right) =>
+        SAUCE_ORDER.indexOf(left as (typeof SAUCE_ORDER)[number]) -
+        SAUCE_ORDER.indexOf(right as (typeof SAUCE_ORDER)[number])
+    );
+}
+
+function getSauceLabels(orderedToppings: string[], orderedSauces: string[]) {
+  if (
+    orderedSauces.length === 2 &&
+    orderedToppings.length === 1 &&
+    orderedToppings[0] === "blueberry"
+  ) {
+    return orderedSauces
+      .slice()
+      .reverse()
+      .map((sauceId) => SAUCES.find((item) => item.id === sauceId)?.fileLabel)
+      .filter(Boolean)
+      .join(" + ");
+  }
+
+  return orderedSauces
+    .map((sauceId) => SAUCES.find((item) => item.id === sauceId)?.fileLabel)
+    .filter(Boolean)
+    .join(" + ");
+}
+
+function getBowlRecipeImage(yogurt: string, toppings: string[], sauces: string[]): string | null {
   const yogurtConfig = YOGURTS.find((item) => item.id === yogurt);
   if (!yogurtConfig) return null;
 
-  const toppingId = toppings[0];
-  const toppingConfig = TOPPINGS.find((item) => item.id === toppingId);
-  const sauceConfig = SAUCES.find((item) => item.id === sauce);
+  const orderedToppings = getOrderedToppings(toppings);
+  const orderedSauces = getOrderedSauces(sauces);
+  const toppingLabels = orderedToppings
+    .map((toppingId) => TOPPINGS.find((item) => item.id === toppingId)?.fileLabel)
+    .filter(Boolean)
+    .join(" + ");
+  const sauceLabels = getSauceLabels(orderedToppings, orderedSauces);
 
   if (
     yogurt === "strawberry" &&
-    toppingId === "blueberry" &&
-    sauce === "chocolate"
+    orderedToppings.length === 1 &&
+    orderedToppings[0] === "blueberry" &&
+    orderedSauces.length === 1 &&
+    orderedSauces[0] === "chocolate"
   ) {
     return "/images/strawberry yogurt bowl/Untitled-2.png";
   }
 
-  if (toppingConfig && sauceConfig) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel} + ${sauceConfig.fileLabel}.png`;
+  if (toppingLabels && sauceLabels) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels} + ${sauceLabels}.png`;
   }
 
-  if (toppingConfig) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel}.png`;
+  if (toppingLabels) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels}.png`;
   }
 
   return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`;
@@ -120,8 +170,8 @@ export default function YogurtMaker() {
     SUGGESTED_MESSAGE.slice(0, MAX_MESSAGE_LENGTH)
   );
   const [selectedYogurt, setSelectedYogurt] = useState("");
-  const [selectedTopping, setSelectedTopping] = useState("");
-  const [selectedSauce, setSelectedSauce] = useState("");
+  const [selectedToppings, setSelectedToppings] = useState<string[]>([]);
+  const [selectedSauces, setSelectedSauces] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -139,7 +189,18 @@ export default function YogurtMaker() {
   };
 
   const toggleTopping = (id: string) =>
-    setSelectedTopping((prev) => (prev === id ? "" : id));
+    setSelectedToppings((prev) =>
+      prev.includes(id)
+        ? prev.filter((topping) => topping !== id)
+        : getOrderedToppings([...prev, id])
+    );
+
+  const toggleSauce = (id: string) =>
+    setSelectedSauces((prev) =>
+      prev.includes(id)
+        ? prev.filter((sauce) => sauce !== id)
+        : getOrderedSauces([...prev, id])
+    );
 
   const canGoNext =
     step === 0 ? selectedYogurt !== "" :
@@ -148,21 +209,58 @@ export default function YogurtMaker() {
 
   const giftLink =
     typeof window !== "undefined"
-      ? `${window.location.origin}/gift?n=${encodeURIComponent(name)}&mn=${encodeURIComponent(motherName)}&m=${encodeURIComponent(message)}&y=${selectedYogurt}&t=${selectedTopping}&s=${selectedSauce}`
+      ? `${window.location.origin}/gift?n=${encodeURIComponent(name)}&mn=${encodeURIComponent(motherName)}&m=${encodeURIComponent(message)}&y=${selectedYogurt}&t=${encodeURIComponent(selectedToppings.join(","))}&s=${encodeURIComponent(selectedSauces.join(","))}`
       : "";
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(giftLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyLink = async () => {
+    if (!giftLink) return;
+
+    try {
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+        await navigator.share({
+          title: "Mother's Day Yogurt Bowl Gift",
+          text: "Here is your custom Mother's Day yogurt bowl card.",
+          url: giftLink,
+        });
+      } else if (
+        typeof navigator !== "undefined" &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
+        await navigator.clipboard.writeText(giftLink);
+      } else if (typeof document !== "undefined") {
+        const textArea = document.createElement("textarea");
+        textArea.value = giftLink;
+        textArea.setAttribute("readonly", "");
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        textArea.style.pointerEvents = "none";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      } else {
+        return;
+      }
+
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      // Users can cancel native share without it being an actual copy failure.
+      if (error instanceof Error && error.name === "AbortError") return;
+
+      if (typeof window !== "undefined") {
+        window.prompt("Share or copy this gift link:", giftLink);
+      }
+    }
   };
 
   // Bowl preview — shared between builder and finish screen
   const renderBowlPreview = () => {
     const composedImage = getBowlRecipeImage(
       selectedYogurt,
-      selectedTopping ? [selectedTopping] : [],
-      selectedSauce
+      selectedToppings,
+      selectedSauces
     );
     if (composedImage) {
       return (
@@ -182,7 +280,7 @@ export default function YogurtMaker() {
     }
     return (
       <>
-        <img src="/images/empty bowl.png" alt="Empty Bowl" className="absolute w-[90%] h-auto z-0 drop-shadow-xl" />
+        <img src="/images/bowl.png" alt="Empty Bowl" className="absolute w-[90%] h-auto z-0 drop-shadow-xl" />
         <AnimatePresence>
           {selectedYogurt && (
             <motion.img
@@ -191,28 +289,32 @@ export default function YogurtMaker() {
               className="absolute w-[75%] h-auto z-10"
             />
           )}
-          {selectedTopping && (
+          {selectedToppings.map((selectedTopping, index) => (
             <motion.img
               key={selectedTopping}
-              initial={{ y: -50, opacity: 0, rotate: -20 }} animate={{ y: 0, opacity: 1, rotate: 0 }} exit={{ y: -50, opacity: 0 }}
+              initial={{ y: -50, opacity: 0, rotate: -20 }}
+              animate={{ y: index * 2, opacity: 1, rotate: 0 }}
+              exit={{ y: -50, opacity: 0 }}
               src={TOPPINGS.find(t => t.id === selectedTopping)?.image} alt={selectedTopping}
               className="absolute w-[65%] h-auto z-20"
             />
-          )}
-          {selectedSauce && (
+          ))}
+          {selectedSauces.map((selectedSauce, index) => (
             <motion.img
+              key={selectedSauce}
               initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
               src={SAUCES.find(s => s.id === selectedSauce)?.image} alt="Sauce"
               className="absolute w-[70%] h-auto z-30"
+              style={{ transform: `translateY(${index * 2}px)` }}
             />
-          )}
+          ))}
         </AnimatePresence>
       </>
     );
   };
 
   return (
-    <div className="min-h-dvh md:h-screen overflow-y-auto md:overflow-hidden font-sans relative" style={{ backgroundColor: "#f5f0e8" }}>
+    <div className="min-h-dvh md:h-screen overflow-hidden font-sans relative" style={{ backgroundColor: "#f5f0e8" }}>
       {/* Subtle warm blobs */}
       <div className="absolute top-10 left-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style={{ backgroundColor: "#d63031" }} />
       <div className="absolute top-10 right-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" style={{ backgroundColor: "#2563eb" }} />
@@ -289,8 +391,8 @@ export default function YogurtMaker() {
                 <motion.div key="step1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Pick a Fruit Topping</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose one topping, or skip this step.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Pick Your Fruit Toppings</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose one or more toppings, or skip this step.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {TOPPINGS.map((topping) => (
@@ -298,11 +400,11 @@ export default function YogurtMaker() {
                         key={topping.id}
                         onClick={() => toggleTopping(topping.id)}
                         className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 sm:gap-3 ${
-                          selectedTopping === topping.id ? "scale-105 shadow-lg" : ""
+                          selectedToppings.includes(topping.id) ? "scale-105 shadow-lg" : ""
                         }`}
                         style={{
-                          borderColor: selectedTopping === topping.id ? "#2563eb" : "#e0d5c5",
-                          backgroundColor: selectedTopping === topping.id ? "#fff" : "#f5f0e8",
+                          borderColor: selectedToppings.includes(topping.id) ? "#2563eb" : "#e0d5c5",
+                          backgroundColor: selectedToppings.includes(topping.id) ? "#fff" : "#f5f0e8",
                         }}
                       >
                         <img src={topping.image} alt={topping.name} className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md" />
@@ -318,20 +420,20 @@ export default function YogurtMaker() {
                 <motion.div key="step2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Add a Syrup</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Add a finishing drizzle, or skip.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Add Syrups</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose one or both syrups, or skip.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {SAUCES.map((sauce) => (
                       <button
                         key={sauce.id}
-                        onClick={() => setSelectedSauce(sauce.id === selectedSauce ? "" : sauce.id)}
+                        onClick={() => toggleSauce(sauce.id)}
                         className={`p-3 sm:p-4 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2 sm:gap-3 ${
-                          selectedSauce === sauce.id ? "scale-105 shadow-lg" : ""
+                          selectedSauces.includes(sauce.id) ? "scale-105 shadow-lg" : ""
                         }`}
                         style={{
-                          borderColor: selectedSauce === sauce.id ? "#c9a96e" : "#e0d5c5",
-                          backgroundColor: selectedSauce === sauce.id ? "#fff" : "#f5f0e8",
+                          borderColor: selectedSauces.includes(sauce.id) ? "#c9a96e" : "#e0d5c5",
+                          backgroundColor: selectedSauces.includes(sauce.id) ? "#fff" : "#f5f0e8",
                         }}
                       >
                         <img src={sauce.image} alt={sauce.name} className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg" />
@@ -356,32 +458,34 @@ export default function YogurtMaker() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Your Name</label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Alex"
-                      className="w-full px-4 py-2.5 rounded-xl border-2 outline-none transition-all text-base"
-                      style={{ borderColor: "#e0d5c5", backgroundColor: "#f5f0e8", color: "#2d3436" }}
-                      onFocus={(e) => (e.target.style.borderColor = "#d63031")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e0d5c5")}
-                    />
-                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Your Name</label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. Alex"
+                        className="w-full px-3 sm:px-4 py-2.5 rounded-xl border-2 outline-none transition-all text-sm sm:text-base"
+                        style={{ borderColor: "#e0d5c5", backgroundColor: "#f5f0e8", color: "#2d3436" }}
+                        onFocus={(e) => (e.target.style.borderColor = "#d63031")}
+                        onBlur={(e) => (e.target.style.borderColor = "#e0d5c5")}
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Mother&apos;s Name</label>
-                    <input
-                      type="text"
-                      value={motherName}
-                      onChange={(e) => setMotherName(e.target.value)}
-                      placeholder="e.g. Mom, Amma, Sarah"
-                      className="w-full px-4 py-2.5 rounded-xl border-2 outline-none transition-all text-base"
-                      style={{ borderColor: "#e0d5c5", backgroundColor: "#f5f0e8", color: "#2d3436" }}
-                      onFocus={(e) => (e.target.style.borderColor = "#d63031")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e0d5c5")}
-                    />
+                    <div>
+                      <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Mother&apos;s Name</label>
+                      <input
+                        type="text"
+                        value={motherName}
+                        onChange={(e) => setMotherName(e.target.value)}
+                        placeholder="e.g. Mom"
+                        className="w-full px-3 sm:px-4 py-2.5 rounded-xl border-2 outline-none transition-all text-sm sm:text-base"
+                        style={{ borderColor: "#e0d5c5", backgroundColor: "#f5f0e8", color: "#2d3436" }}
+                        onFocus={(e) => (e.target.style.borderColor = "#d63031")}
+                        onBlur={(e) => (e.target.style.borderColor = "#e0d5c5")}
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -410,20 +514,20 @@ export default function YogurtMaker() {
                     </p>
                   </div>
 
-                  <div className="space-y-2 pt-1">
+                  <div className="flex gap-2 pt-1">
                     <button
                       onClick={copyLink}
                       disabled={!name.trim()}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2"
+                      className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 sm:px-6 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 text-xs sm:text-base whitespace-nowrap"
                       style={{ borderColor: "#e0d5c5", backgroundColor: "#ede8dc", color: "#2d3436" }}
                     >
                       {copied ? <Check className="w-5 h-5" style={{ color: "#2d6a4f" }} /> : <Copy className="w-5 h-5" />}
-                      {copied ? "Link Copied!" : "Copy Gift Link"}
+                      {copied ? "Link Ready!" : "Share Gift Link"}
                     </button>
                     {name.trim() && (
                       <Link
                         href={giftLink.replace(typeof window !== "undefined" ? window.location.origin : "", "")}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl font-bold shadow-md transition-all text-white"
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 sm:px-6 rounded-xl font-bold shadow-md transition-all text-white text-xs sm:text-base whitespace-nowrap"
                         style={{ backgroundColor: "#d63031" }}
                       >
                         <Gift className="w-5 h-5" />

@@ -42,28 +42,77 @@ const TOPPINGS = [
   { id: "strawberry", fileLabel: "strawberry topping" },
 ];
 
+const TOPPING_ORDER = ["strawberry", "blueberry", "banana"] as const;
+
 const SAUCES = [
   { id: "chocolate", fileLabel: "chocolate syrup" },
   { id: "honey", fileLabel: "honey syrup" },
 ];
 
-function getBowlRecipeImage(yogurt: string | null, topping: string | null, sauce: string | null) {
+const SAUCE_ORDER = ["chocolate", "honey"] as const;
+
+function getOrderedToppings(toppings: string[]) {
+  return [...new Set(toppings)]
+    .filter((topping) => TOPPINGS.some((item) => item.id === topping))
+    .sort(
+      (left, right) =>
+        TOPPING_ORDER.indexOf(left as (typeof TOPPING_ORDER)[number]) -
+        TOPPING_ORDER.indexOf(right as (typeof TOPPING_ORDER)[number])
+    );
+}
+
+function getOrderedSauces(sauces: string[]) {
+  return [...new Set(sauces)]
+    .filter((sauce) => SAUCES.some((item) => item.id === sauce))
+    .sort(
+      (left, right) =>
+        SAUCE_ORDER.indexOf(left as (typeof SAUCE_ORDER)[number]) -
+        SAUCE_ORDER.indexOf(right as (typeof SAUCE_ORDER)[number])
+    );
+}
+
+function getSauceLabels(orderedToppings: string[], orderedSauces: string[]) {
+  if (
+    orderedSauces.length === 2 &&
+    orderedToppings.length === 1 &&
+    orderedToppings[0] === "blueberry"
+  ) {
+    return orderedSauces
+      .slice()
+      .reverse()
+      .map((sauceId) => SAUCES.find((item) => item.id === sauceId)?.fileLabel)
+      .filter(Boolean)
+      .join(" + ");
+  }
+
+  return orderedSauces
+    .map((sauceId) => SAUCES.find((item) => item.id === sauceId)?.fileLabel)
+    .filter(Boolean)
+    .join(" + ");
+}
+
+function getBowlRecipeImage(yogurt: string | null, toppings: string[], sauces: string[]) {
   const yogurtConfig = YOGURTS.find((item) => item.id === yogurt);
   if (!yogurtConfig) return "/images/image.png";
 
-  if (yogurt === "strawberry" && topping === "blueberry" && sauce === "chocolate") {
+  const orderedToppings = getOrderedToppings(toppings);
+  const orderedSauces = getOrderedSauces(sauces);
+  const toppingLabels = orderedToppings
+    .map((toppingId) => TOPPINGS.find((item) => item.id === toppingId)?.fileLabel)
+    .filter(Boolean)
+    .join(" + ");
+  const sauceLabels = getSauceLabels(orderedToppings, orderedSauces);
+
+  if (yogurt === "strawberry" && orderedToppings.length === 1 && orderedToppings[0] === "blueberry" && orderedSauces.length === 1 && orderedSauces[0] === "chocolate") {
     return "/images/strawberry yogurt bowl/Untitled-2.png";
   }
 
-  const toppingConfig = TOPPINGS.find((item) => item.id === topping);
-  const sauceConfig = SAUCES.find((item) => item.id === sauce);
-
-  if (toppingConfig && sauceConfig) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel} + ${sauceConfig.fileLabel}.png`;
+  if (toppingLabels && sauceLabels) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels} + ${sauceLabels}.png`;
   }
 
-  if (toppingConfig) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingConfig.fileLabel}.png`;
+  if (toppingLabels) {
+    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels}.png`;
   }
 
   return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`;
@@ -103,8 +152,10 @@ function GiftContent() {
   const motherName = searchParams.get("mn") || "Mom";
   const message = searchParams.get("m") || "";
   const yogurt = searchParams.get("y");
-  const topping = searchParams.get("t");
-  const sauce = searchParams.get("s");
+  const toppingParam = searchParams.get("t");
+  const sauceParam = searchParams.get("s");
+  const toppings = toppingParam ? toppingParam.split(",").filter(Boolean) : [];
+  const sauces = sauceParam ? sauceParam.split(",").filter(Boolean) : [];
 
   useEffect(() => {
     const updateSize = () =>
@@ -116,7 +167,7 @@ function GiftContent() {
   }, []);
 
   const letterContent = createLetterText(message, motherName);
-  const bowlImage = getBowlRecipeImage(yogurt, topping, sauce);
+  const bowlImage = getBowlRecipeImage(yogurt, toppings, sauces);
 
   return (
     <div className={styles.pageShell}>

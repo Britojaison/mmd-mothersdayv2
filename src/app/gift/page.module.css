@@ -370,7 +370,7 @@
     inset: auto;
     min-height: 100dvh;
     padding: 12px;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   .cardPerspective {

@@ -71,6 +71,13 @@
   overflow: hidden;
   perspective: 1200px;
 }
+
+.openCardStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
  
 .postcardFrame {
   position: relative;
@@ -364,6 +371,40 @@
   color: #b63a4d;
 }
 
+.makeYourOwnButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: min(320px, 86vw);
+  padding: 14px 28px;
+  border: 1px solid rgba(182, 58, 77, 0.16);
+  border-radius: 9999px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 243, 231, 0.98)),
+    linear-gradient(135deg, #f6d9c6, #f2c7d0);
+  color: #9d3046;
+  font-family: var(--font-roca), Georgia, "Times New Roman", serif;
+  font-size: clamp(0.92rem, 1.1vw, 1.08rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow:
+    0 16px 28px rgba(167, 109, 82, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+.makeYourOwnButton:hover {
+  transform: translateY(-2px) scale(1.01);
+  color: #b63a4d;
+  box-shadow:
+    0 20px 34px rgba(167, 109, 82, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
 @media (max-width: 900px) {
   .pageShell {
     position: relative;
@@ -376,6 +417,11 @@
   .cardPerspective {
     width: min(100%, 560px);
     height: auto;
+  }
+
+  .openCardStack {
+    width: 100%;
+    gap: 18px;
   }
 
   .postcardFrame {
@@ -433,6 +479,7 @@
   .noteArea {
     padding-top: 12px;
   }
+
 }
 
 @media (max-width: 640px) {
@@ -515,6 +562,12 @@
 
   .signatureName {
     font-size: 1.15rem;
+  }
+
+  .makeYourOwnButton {
+    min-width: 100%;
+    padding: 13px 20px;
+    font-size: 0.9rem;
   }
 }
 

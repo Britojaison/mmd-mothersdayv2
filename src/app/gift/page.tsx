@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -215,112 +216,118 @@ function GiftContent() {
             initial={{ rotateY: 90, opacity: 0 }}
             animate={{ rotateY: 0, opacity: 1 }}
             transition={{ type: "spring", damping: 18, stiffness: 95 }}
-            className={styles.cardPerspective}
+            className={styles.openCardStack}
           >
-            <div className={styles.postcardFrame}>
-              <Image
-                src="/images/2ndborder.png"
-                alt=""
-                fill
-                sizes="100vw"
-                className={styles.borderImage}
-                priority
-              />
+            <div className={styles.cardPerspective}>
+              <div className={styles.postcardFrame}>
+                <Image
+                  src="/images/2ndborder.png"
+                  alt=""
+                  fill
+                  sizes="100vw"
+                  className={styles.borderImage}
+                  priority
+                />
 
-              <div className={styles.postcardInner}>
-                <section className={styles.leftPanel}>
-                  <div className={styles.headlineBlock}>
-                    <div className={styles.headlineRow}>
-                      <div className={styles.bouquetWrap}>
-                        <Image
-                          src="/images/boqueue.png"
-                          alt=""
-                          fill
-                          sizes="72px"
-                          className={styles.bouquetImage}
-                          priority
-                        />
+                <div className={styles.postcardInner}>
+                  <section className={styles.leftPanel}>
+                    <div className={styles.headlineBlock}>
+                      <div className={styles.headlineRow}>
+                        <div className={styles.bouquetWrap}>
+                          <Image
+                            src="/images/boqueue.png"
+                            alt=""
+                            fill
+                            sizes="72px"
+                            className={styles.bouquetImage}
+                            priority
+                          />
+                        </div>
+                        <h1 className={styles.headline}>
+                          Something extra special for the one who always gives a
+                          little extra love
+                        </h1>
                       </div>
-                      <h1 className={styles.headline}>
-                        Something extra special for the one who always gives a
-                        little extra love
-                      </h1>
+                      <div className={styles.rule} />
                     </div>
-                    <div className={styles.rule} />
-                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.35, type: "spring", stiffness: 90 }}
-                    className={styles.bowlArtwork}
-                  >
-                    <Image
-                      src={bowlImage}
-                      alt="Yogurt bowl artwork"
-                      fill
-                      sizes="(max-width: 900px) 70vw, 34vw"
-                      className={styles.artworkImage}
-                      priority
-                    />
-                  </motion.div>
-                </section>
-
-                <section className={styles.rightPanel}>
-                  <div className={styles.topDecorArea}>
                     <motion.div
-                      initial={{ scale: 0.84, rotate: -4, opacity: 0 }}
-                      animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                      transition={{ delay: 0.55, type: "spring", damping: 14 }}
-                      className={styles.decorCluster}
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.35, type: "spring", stiffness: 90 }}
+                      className={styles.bowlArtwork}
                     >
-                      <div className={styles.stampCluster}>
-                        <Image
-                          src="/images/logo.png"
-                          alt="For a Love Like Hers"
-                          fill
-                          sizes="240px"
-                          className={styles.logoImage}
-                          priority
-                        />
-                      </div>
-                      <div className={styles.letterBadge}>
-                        <Image
-                          src="/images/letter_img.png"
-                          alt=""
-                          fill
-                          sizes="150px"
-                          className={styles.letterBadgeImage}
-                          priority
-                        />
-                      </div>
-                      <div className={styles.flowerWrap}>
-                        <Image
-                          src="/images/flower.png"
-                          alt=""
-                          fill
-                          sizes="84px"
-                          className={styles.flowerImage}
-                          priority
-                        />
-                      </div>
+                      <Image
+                        src={bowlImage}
+                        alt="Yogurt bowl artwork"
+                        fill
+                        sizes="(max-width: 900px) 70vw, 34vw"
+                        className={styles.artworkImage}
+                        priority
+                      />
                     </motion.div>
-                  </div>
+                  </section>
 
-                  <div className={styles.noteArea}>
-                    <div className={styles.letterContent}>
-                      <p className={styles.letterGreeting}>{letterContent.greeting}</p>
-                      <p className={styles.letterBody}>{letterContent.body}</p>
+                  <section className={styles.rightPanel}>
+                    <div className={styles.topDecorArea}>
+                      <motion.div
+                        initial={{ scale: 0.84, rotate: -4, opacity: 0 }}
+                        animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                        transition={{ delay: 0.55, type: "spring", damping: 14 }}
+                        className={styles.decorCluster}
+                      >
+                        <div className={styles.stampCluster}>
+                          <Image
+                            src="/images/logo.png"
+                            alt="For a Love Like Hers"
+                            fill
+                            sizes="240px"
+                            className={styles.logoImage}
+                            priority
+                          />
+                        </div>
+                        <div className={styles.letterBadge}>
+                          <Image
+                            src="/images/letter_img.png"
+                            alt=""
+                            fill
+                            sizes="150px"
+                            className={styles.letterBadgeImage}
+                            priority
+                          />
+                        </div>
+                        <div className={styles.flowerWrap}>
+                          <Image
+                            src="/images/flower.png"
+                            alt=""
+                            fill
+                            sizes="84px"
+                            className={styles.flowerImage}
+                            priority
+                          />
+                        </div>
+                      </motion.div>
                     </div>
-                  </div>
 
-                  <div className={styles.signatureArea}>
-                    <p className={styles.signatureLabel}>With love,</p>
-                    <p className={styles.signatureName}>{name}</p>
-                  </div>
-                </section>
+                    <div className={styles.noteArea}>
+                      <div className={styles.letterContent}>
+                        <p className={styles.letterGreeting}>{letterContent.greeting}</p>
+                        <p className={styles.letterBody}>{letterContent.body}</p>
+                      </div>
+                    </div>
+
+                    <div className={styles.signatureArea}>
+                      <p className={styles.signatureLabel}>With love,</p>
+                      <p className={styles.signatureName}>{name}</p>
+                    </div>
+                  </section>
+                </div>
               </div>
             </div>
+
+            <Link href="/" className={styles.makeYourOwnButton}>
+              Make your own yogurt bowl
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

@@ -331,7 +331,7 @@ export default function YogurtMaker() {
           >
             <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
             <h1 className="text-2xl sm:text-3xl md:text-5xl leading-none font-extrabold" style={{ color: "#2d3436", fontFamily: headingFont }}>
-              Perfect mother's day treat
+              The Sweetest Treat for Your Mom
             </h1>
           </motion.div>
           <p className="text-sm sm:text-base px-2" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>
@@ -362,7 +362,7 @@ export default function YogurtMaker() {
                 <motion.div key="step0" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>1. Pick Mum&apos;s Favourite Yogurt Bowl</h2>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>1. Pick Her Spoonful of Happiness</h2>
                     <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose the flavor that feels most like her</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -391,7 +391,7 @@ export default function YogurtMaker() {
                 <motion.div key="step1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Choose Mum&apos;s Favourite Toppings</h2>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Top It with Mum’s Favorites</h2>
                     <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Pick the fruit she&apos;d love most</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -420,7 +420,7 @@ export default function YogurtMaker() {
                 <motion.div key="step2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Add a Sweet Little Extra for Mum</h2>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Finish with Something Sweet</h2>
                     <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose the syrup she&apos;d enjoy most</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -522,7 +522,7 @@ export default function YogurtMaker() {
                       style={{ borderColor: "#e0d5c5", backgroundColor: "#ede8dc", color: "#2d3436" }}
                     >
                       {copied ? <Check className="w-5 h-5" style={{ color: "#2d6a4f" }} /> : <Copy className="w-5 h-5" />}
-                      {copied ? "Link Ready!" : "Share Gift Link"}
+                      {copied ? "Link Ready!" : "Share the Love"}
                     </button>
                     {name.trim() && (
                       <Link

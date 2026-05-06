@@ -331,11 +331,11 @@ export default function YogurtMaker() {
           >
             <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
             <h1 className="text-2xl sm:text-3xl md:text-5xl leading-none font-extrabold" style={{ color: "#2d3436", fontFamily: headingFont }}>
-              Yogurt Bowl Magic
+              Perfect mother's day treat
             </h1>
           </motion.div>
           <p className="text-sm sm:text-base px-2" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>
-            Create the perfect Mother&apos;s Day treat!
+            Build a yogurt bowl made just for Mum.
           </p>
         </header>
 
@@ -362,8 +362,8 @@ export default function YogurtMaker() {
                 <motion.div key="step0" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>1. Choose a Base</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Pick a yogurt flavor to start your bowl.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>1. Pick Mum&apos;s Favourite Yogurt Bowl</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose the flavor that feels most like her</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {YOGURTS.map((yogurt) => (
@@ -391,8 +391,8 @@ export default function YogurtMaker() {
                 <motion.div key="step1" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Pick Your Fruit Toppings</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose one or more toppings, or skip this step.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>2. Choose Mum&apos;s Favourite Toppings</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Pick the fruit she&apos;d love most</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {TOPPINGS.map((topping) => (
@@ -420,8 +420,8 @@ export default function YogurtMaker() {
                 <motion.div key="step2" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }}
                   className="flex-1 flex flex-col justify-center space-y-4">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Add Syrups</h2>
-                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose one or both syrups, or skip.</p>
+                    <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>3. Add a Sweet Little Extra for Mum</h2>
+                    <p className="text-sm mt-1" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Choose the syrup she&apos;d enjoy most</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {SAUCES.map((sauce) => (
@@ -453,8 +453,8 @@ export default function YogurtMaker() {
                       <Check className="w-5 h-5" style={{ color: "#2d6a4f" }} />
                     </div>
                     <div>
-                      <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>Almost done!</h2>
-                      <p className="text-sm" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Write a message for your Mom.</p>
+                      <h2 className="text-xl md:text-2xl font-bold" style={{ color: "#2d3436", fontFamily: headingFont }}>Almost Mum-ready!</h2>
+                      <p className="text-sm" style={{ color: "#636e72", fontFamily: bodyFont, fontWeight: 400 }}>Add the names and a sweet note just for her.</p>
                     </div>
                   </div>
 
@@ -474,7 +474,7 @@ export default function YogurtMaker() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Mother&apos;s Name</label>
+                      <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Mum&apos;s Name</label>
                       <input
                         type="text"
                         value={motherName}
@@ -489,7 +489,7 @@ export default function YogurtMaker() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Message for Mom</label>
+                    <label className="block text-sm font-semibold mb-1" style={{ color: "#2d3436" }}>Your Message for Mum</label>
                     <textarea
                       ref={messageRef}
                       value={message}

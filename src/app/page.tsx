@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Copy, Gift, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
+import { useImageCache } from "./image-cache";
 
 const YOGURTS = [
   {
@@ -170,7 +171,38 @@ function getBowlRecipeImage(yogurt: string, toppings: string[], sauces: string[]
   return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`);
 }
 
+function getSubsets(items: string[]) {
+  return items.reduce<string[][]>(
+    (subsets, item) => [...subsets, ...subsets.map((subset) => [...subset, item])],
+    [[]]
+  );
+}
+
+const OPTION_IMAGE_PATHS = [
+  "/images/bowl.png",
+  "/images/logo.png",
+  ...YOGURTS.map((yogurt) => yogurt.image),
+  ...TOPPINGS.map((topping) => topping.image),
+  ...SAUCES.map((sauce) => sauce.image),
+];
+
+const RECIPE_IMAGE_PATHS = Array.from(
+  new Set(
+    YOGURTS.flatMap((yogurt) =>
+      getSubsets(TOPPINGS.map((topping) => topping.id)).flatMap((toppings) =>
+        getSubsets(SAUCES.map((sauce) => sauce.id))
+          .map((sauces) => getBowlRecipeImage(yogurt.id, toppings, sauces))
+          .filter((src): src is string => Boolean(src))
+      )
+    )
+  )
+);
+
+const CACHEABLE_IMAGE_PATHS = [...OPTION_IMAGE_PATHS, ...RECIPE_IMAGE_PATHS];
+
 export default function YogurtMaker() {
+  useImageCache(CACHEABLE_IMAGE_PATHS);
+
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [motherName, setMotherName] = useState("");

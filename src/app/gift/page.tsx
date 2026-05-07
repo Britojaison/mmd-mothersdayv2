@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import Confetti from "react-confetti";
 
+import { useImageCache } from "../image-cache";
 import styles from "./page.module.css";
 
 const MAX_MESSAGE_LENGTH = 140;
@@ -126,6 +127,36 @@ function getBowlRecipeImage(yogurt: string | null, toppings: string[], sauces: s
   return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`);
 }
 
+function getSubsets(items: string[]) {
+  return items.reduce<string[][]>(
+    (subsets, item) => [...subsets, ...subsets.map((subset) => [...subset, item])],
+    [[]]
+  );
+}
+
+const DECOR_IMAGE_PATHS = [
+  "/images/image.png",
+  "/images/letter_img.png",
+  "/images/2ndborder.png",
+  "/images/boqueue.png",
+  "/images/logo.png",
+  "/images/flower.png",
+];
+
+const RECIPE_IMAGE_PATHS = Array.from(
+  new Set(
+    YOGURTS.flatMap((yogurt) =>
+      getSubsets(TOPPINGS.map((topping) => topping.id)).flatMap((toppings) =>
+        getSubsets(SAUCES.map((sauce) => sauce.id))
+          .map((sauces) => getBowlRecipeImage(yogurt.id, toppings, sauces))
+          .filter((src): src is string => Boolean(src))
+      )
+    )
+  )
+);
+
+const CACHEABLE_IMAGE_PATHS = [...DECOR_IMAGE_PATHS, ...RECIPE_IMAGE_PATHS];
+
 function createLetterText(message: string, motherName: string) {
   const source = message.slice(0, MAX_MESSAGE_LENGTH).trim();
   const greetingName = motherName.trim() || "Mom";
@@ -152,6 +183,8 @@ function createLetterText(message: string, motherName: string) {
 }
 
 function GiftContent() {
+  useImageCache(CACHEABLE_IMAGE_PATHS);
+
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });

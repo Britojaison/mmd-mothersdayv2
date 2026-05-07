@@ -90,6 +90,13 @@ const headingFont = "var(--font-roca), Arial, Helvetica, sans-serif";
 const bodyFont = "var(--font-zeitung), Arial, Helvetica, sans-serif";
 const SUGGESTED_MESSAGE = "Happy Mother's Day! I made this just for you with all my love 💕";
 
+function encodePublicAssetPath(path: string) {
+  return path
+    .split("/")
+    .map((segment, index) => (index === 0 ? segment : encodeURIComponent(segment)))
+    .join("/");
+}
+
 function getOrderedToppings(toppings: string[]) {
   return [...new Set(toppings)]
     .filter((topping) => TOPPINGS.some((item) => item.id === topping))
@@ -149,18 +156,18 @@ function getBowlRecipeImage(yogurt: string, toppings: string[], sauces: string[]
     orderedSauces.length === 1 &&
     orderedSauces[0] === "chocolate"
   ) {
-    return "/images/strawberry yogurt bowl/Untitled-2.png";
+    return encodePublicAssetPath("/images/strawberry yogurt bowl/Untitled-2.png");
   }
 
   if (toppingLabels && sauceLabels) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels} + ${sauceLabels}.png`;
+    return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels} + ${sauceLabels}.png`);
   }
 
   if (toppingLabels) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels}.png`;
+    return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels}.png`);
   }
 
-  return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`;
+  return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`);
 }
 
 export default function YogurtMaker() {
@@ -315,11 +322,14 @@ export default function YogurtMaker() {
   };
 
   return (
-    <div className="min-h-dvh md:h-screen overflow-hidden font-sans relative" style={{ backgroundColor: "#f5f0e8" }}>
+    <div className="min-h-dvh md:h-screen overflow-x-hidden md:overflow-hidden font-sans relative" style={{ backgroundColor: "#f5f0e8" }}>
       {/* Subtle warm blobs */}
       <div className="absolute top-10 left-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style={{ backgroundColor: "#d63031" }} />
-      <div className="absolute top-10 right-10 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" style={{ backgroundColor: "#2563eb" }} />
-      <div className="absolute -bottom-8 left-20 w-40 h-40 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-blob animation-delay-4000" style={{ backgroundColor: "#c9a96e" }} />
+      <div
+        className="absolute top-10 right-10 w-40 h-40 rounded-full filter blur-3xl opacity-30 pointer-events-none"
+        style={{ backgroundColor: "#2563eb" }}
+      />
+      <div className="absolute -bottom-8 left-20 w-40 h-40 rounded-full filter blur-3xl opacity-25 animate-blob animation-delay-4000 pointer-events-none" style={{ backgroundColor: "#c9a96e" }} />
 
       <div className="max-w-5xl mx-auto min-h-dvh md:h-full px-3 sm:px-4 py-4 md:py-5 relative z-10 flex flex-col justify-start md:justify-center">
         {/* Header */}

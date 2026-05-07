@@ -52,6 +52,13 @@ const SAUCES = [
 
 const SAUCE_ORDER = ["chocolate", "honey"] as const;
 
+function encodePublicAssetPath(path: string) {
+  return path
+    .split("/")
+    .map((segment, index) => (index === 0 ? segment : encodeURIComponent(segment)))
+    .join("/");
+}
+
 function getOrderedToppings(toppings: string[]) {
   return [...new Set(toppings)]
     .filter((topping) => TOPPINGS.some((item) => item.id === topping))
@@ -105,18 +112,18 @@ function getBowlRecipeImage(yogurt: string | null, toppings: string[], sauces: s
   const sauceLabels = getSauceLabels(orderedToppings, orderedSauces);
 
   if (yogurt === "strawberry" && orderedToppings.length === 1 && orderedToppings[0] === "blueberry" && orderedSauces.length === 1 && orderedSauces[0] === "chocolate") {
-    return "/images/strawberry yogurt bowl/Untitled-2.png";
+    return encodePublicAssetPath("/images/strawberry yogurt bowl/Untitled-2.png");
   }
 
   if (toppingLabels && sauceLabels) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels} + ${sauceLabels}.png`;
+    return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels} + ${sauceLabels}.png`);
   }
 
   if (toppingLabels) {
-    return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels}.png`;
+    return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.filePrefix} + ${toppingLabels}.png`);
   }
 
-  return `/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`;
+  return encodePublicAssetPath(`/images/${yogurtConfig.bowlFolder}/${yogurtConfig.baseImage}`);
 }
 
 function createLetterText(message: string, motherName: string) {

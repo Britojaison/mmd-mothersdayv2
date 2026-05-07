@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { Copy, Gift, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
 
@@ -280,7 +281,7 @@ export default function YogurtMaker() {
     }
     return (
       <>
-        <img src="/images/bowl.png" alt="Empty Bowl" className="absolute w-[90%] h-auto z-0 drop-shadow-xl" />
+        <Image src="/images/bowl.png" alt="Empty Bowl" fill className="object-contain z-0 drop-shadow-xl" />
         <AnimatePresence>
           {selectedYogurt && (
             <motion.img
@@ -329,7 +330,7 @@ export default function YogurtMaker() {
             transition={{ type: "spring", bounce: 0.5 }}
             className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-2"
           >
-            <img src="/images/logo.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain" />
+            <Image src="/images/logo.png" alt="Logo" width={56} height={56} className="object-contain" />
             <h1 className="text-2xl sm:text-3xl md:text-5xl leading-none font-extrabold" style={{ color: "#2d3436", fontFamily: headingFont }}>
               The Sweetest Treat for Your Mom
             </h1>
@@ -378,7 +379,7 @@ export default function YogurtMaker() {
                           backgroundColor: selectedYogurt === yogurt.id ? "#fff" : "#f5f0e8",
                         }}
                       >
-                        <img src={yogurt.image} alt={yogurt.name} className="w-16 h-16 md:w-20 md:h-20 object-contain relative z-10" />
+                        <Image src={yogurt.image} alt={yogurt.name} width={80} height={80} className="object-contain relative z-10" />
                         <span className="text-xs sm:text-sm text-center" style={{ color: "#2d3436", fontFamily: bodyFont, fontWeight: 400 }}>{yogurt.name}</span>
                       </button>
                     ))}
@@ -407,7 +408,7 @@ export default function YogurtMaker() {
                           backgroundColor: selectedToppings.includes(topping.id) ? "#fff" : "#f5f0e8",
                         }}
                       >
-                        <img src={topping.image} alt={topping.name} className="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md" />
+                        <Image src={topping.image} alt={topping.name} width={64} height={64} className="object-contain drop-shadow-md" />
                         <span className="text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436", fontFamily: bodyFont, fontWeight: 400 }}>{topping.name}</span>
                       </button>
                     ))}
@@ -436,7 +437,7 @@ export default function YogurtMaker() {
                           backgroundColor: selectedSauces.includes(sauce.id) ? "#fff" : "#f5f0e8",
                         }}
                       >
-                        <img src={sauce.image} alt={sauce.name} className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-lg" />
+                        <Image src={sauce.image} alt={sauce.name} width={80} height={80} className="object-contain drop-shadow-lg" />
                         <span className="text-xs sm:text-sm text-center leading-tight" style={{ color: "#2d3436", fontFamily: bodyFont, fontWeight: 400 }}>{sauce.name}</span>
                       </button>
                     ))}

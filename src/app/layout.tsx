@@ -32,8 +32,30 @@ const zeitung = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mmd-mothersday.vercel.app"),
   title: "Mother's Day Yogurt Bowl Maker 🍓",
   description: "Create a delicious, custom yogurt bowl for your Mom and send her a special Mother's Day gift!",
+  openGraph: {
+    title: "Mother's Day Yogurt Bowl Maker 🍓",
+    description: "Create a delicious, custom yogurt bowl for your Mom and send her a special Mother's Day gift!",
+    url: "https://mmd-mothersday.vercel.app",
+    siteName: "Mother's Day Gift",
+    images: [
+      {
+        url: "/images/logo.png",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mother's Day Yogurt Bowl Maker 🍓",
+    description: "Create a delicious, custom yogurt bowl for your Mom and send her a special Mother's Day gift!",
+    images: ["/images/logo.png"],
+  },
 };
 
 export default function RootLayout({

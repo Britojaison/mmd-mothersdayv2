@@ -35,6 +35,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://mmd-mothersday.vercel.app"),
   title: "Mother's Day Yogurt Bowl Maker 🍓",
   description: "Create a delicious, custom yogurt bowl for your Mom and send her a special Mother's Day gift!",
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
   openGraph: {
     title: "Mother's Day Yogurt Bowl Maker 🍓",
     description: "Create a delicious, custom yogurt bowl for your Mom and send her a special Mother's Day gift!",
